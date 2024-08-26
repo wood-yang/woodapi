@@ -10,6 +10,7 @@
             <result property="description" column="description" jdbcType="VARCHAR"/>
             <result property="url" column="url" jdbcType="VARCHAR"/>
             <result property="method" column="method" jdbcType="VARCHAR"/>
+            <result property="requestParams" column="requestParams" jdbcType="VARCHAR"/>
             <result property="status" column="status" jdbcType="TINYINT"/>
             <result property="requestHeader" column="requestHeader" jdbcType="VARCHAR"/>
             <result property="responseHeader" column="responseHeader" jdbcType="VARCHAR"/>
@@ -21,7 +22,7 @@
 
     <sql id="Base_Column_List">
         id,name,description,
-        url,method,status,
+        url,method,requestParams,status,
         requestHeader,responseHeader,userId,
         createTime,updateTime,isDeleted
     </sql>

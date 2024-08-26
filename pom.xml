@@ -66,6 +66,11 @@
             <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
             <version>4.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.wood</groupId>
+            <artifactId>woodapi-client-sdk</artifactId>
+            <version>0.0.1</version>
+        </dependency>
         <!-- https://cloud.tencent.com/document/product/436/10199-->
         <dependency>
             <groupId>com.qcloud</groupId>
