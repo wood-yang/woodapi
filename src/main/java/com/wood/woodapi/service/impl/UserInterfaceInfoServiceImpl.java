@@ -2,6 +2,7 @@ package com.wood.woodapi.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wood.woodapi.common.ErrorCode;
 import com.wood.woodapi.constant.CommonConstant;
@@ -16,6 +17,7 @@ import com.wood.woodapi.utils.SqlUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
 * @author 24420
@@ -60,9 +62,6 @@ public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoM
         if (leftNum != null && leftNum <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "leftNum 错误");
         }
-        if (totalNum != null && leftNum != null && totalNum < leftNum) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "leftNum 异常");
-        }
         if (status != null && (status < 0 || status > 1)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "status 异常");
         }
@@ -91,6 +90,22 @@ public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoM
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;
+    }
+
+    @Override
+    @Transactional
+    public boolean invokeCount(Long userId, Long interfaceInfoId) {
+        if (userId == null || userId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "userId 错误");
+        }
+        if (interfaceInfoId == null || interfaceInfoId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "id 错误");
+        }
+        UpdateWrapper<UserInterfaceInfo> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("userId", userId);
+        updateWrapper.eq("interfaceInfoId", interfaceInfoId);
+        updateWrapper.setSql("leftNum = leftNum - 1, totalNum = totalNum + 1");
+        return this.update(updateWrapper);
     }
 }
 
