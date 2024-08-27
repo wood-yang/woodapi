@@ -11,11 +11,9 @@ import org.springframework.util.DigestUtils;
  */
 @SpringBootTest
 class MainApplicationTests {
-
     @Test
     void contextLoads() {
         String encryptPassword = DigestUtils.md5DigestAsHex(("wood12345678").getBytes());
         System.out.println(encryptPassword);
     }
-
 }
