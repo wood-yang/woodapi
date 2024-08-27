@@ -28,17 +28,17 @@ create table if not exists user
 CREATE TABLE interfaceInfo
 (
     `id`             bigint PRIMARY KEY NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-    `name`           varchar(256)    NOT NULL DEFAULT '' COMMENT '接口名称',
-    `description`    varchar(512)    NULL     DEFAULT '' COMMENT '接口描述',
-    `url`            varchar(512)    NOT NULL DEFAULT '' COMMENT '接口地址',
-    `method`         varchar(256)    NOT NULL DEFAULT '' COMMENT '接口类型',
-    `status`         tinyint         NOT NULL DEFAULT 0 COMMENT '状态(0 - 关闭 1 - 打开)',
-    `requestHeader`  text            NULL COMMENT '请求头',
-    `responseHeader` text            NULL COMMENT '响应头',
-    `userId`         bigint          NOT NULL COMMENT '创建人 id',
-    `createTime`     datetime        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `updateTime`     datetime        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-    `isDeleted`      tinyint         NOT NULL DEFAULT 0 COMMENT '是否删除',
+    `name`           varchar(256)       NOT NULL DEFAULT '' COMMENT '接口名称',
+    `description`    varchar(512)       NULL     DEFAULT '' COMMENT '接口描述',
+    `url`            varchar(512)       NOT NULL DEFAULT '' COMMENT '接口地址',
+    `method`         varchar(256)       NOT NULL DEFAULT '' COMMENT '接口类型',
+    `status`         tinyint            NOT NULL DEFAULT 0 COMMENT '状态(0 - 关闭 1 - 打开)',
+    `requestHeader`  text               NULL COMMENT '请求头',
+    `responseHeader` text               NULL COMMENT '响应头',
+    `userId`         bigint             NOT NULL COMMENT '创建人 id',
+    `createTime`     datetime           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updateTime`     datetime           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    `isDeleted`      tinyint            NOT NULL DEFAULT 0 COMMENT '是否删除',
     KEY `id_index` (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
@@ -47,8 +47,8 @@ CREATE TABLE interfaceInfo
 CREATE TABLE user_interfaceInfo
 (
     `id`              bigint PRIMARY KEY NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-    `userId`          bigint             NOT NULL DEFAULT '' COMMENT '调用用户 id',
-    `interfaceInfoId` bigint             NOT NULL DEFAULT '' COMMENT '调用接口 id',
+    `userId`          bigint             NOT NULL COMMENT '调用用户 id',
+    `interfaceInfoId` bigint             NOT NULL COMMENT '调用接口 id',
     `totalNum`        int                         default 0 NOT NULL COMMENT '总调用次数',
     `leftNum`         int                         default 0 NOT NULL COMMENT '剩余调用次数',
     `status`          int                         default 0 NOT NULL COMMENT '是否允许调用(0 - 允许 1 - 不允许)',
