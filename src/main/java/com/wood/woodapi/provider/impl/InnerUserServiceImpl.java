@@ -4,9 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wood.common.model.entity.User;
 import com.wood.common.service.InnerUserService;
 import com.wood.woodapi.mapper.UserMapper;
+import org.apache.dubbo.config.annotation.DubboService;
 
 import javax.annotation.Resource;
-
+@DubboService
 public class InnerUserServiceImpl implements InnerUserService {
 
     @Resource

@@ -2,9 +2,10 @@ package com.wood.woodapi.provider.impl;
 
 import com.wood.common.service.InnerUserInterfaceInfoService;
 import com.wood.woodapi.service.UserInterfaceInfoService;
+import org.apache.dubbo.config.annotation.DubboService;
 
 import javax.annotation.Resource;
-
+@DubboService
 public class InnerUserInterfaceInfoServiceImpl implements InnerUserInterfaceInfoService {
 
     @Resource
