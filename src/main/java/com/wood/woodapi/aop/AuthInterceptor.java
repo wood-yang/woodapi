@@ -4,7 +4,7 @@ import com.wood.woodapi.annotation.AuthCheck;
 import com.wood.woodapi.common.ErrorCode;
 import com.wood.woodapi.exception.BusinessException;
 import com.wood.common.model.entity.User;
-import com.wood.woodapi.model.enums.UserRoleEnum;
+import com.wood.common.model.enums.UserRoleEnum;
 import com.wood.woodapi.service.UserService;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

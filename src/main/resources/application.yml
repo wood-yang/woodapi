@@ -11,39 +11,26 @@ spring:
       matching-strategy: ant_path_matcher
   # session 配置
   session:
-    # todo 取消注释开启分布式 session（须先配置 Redis）
-    # store-type: redis
+#    store-type: redis
     # 30 天过期
     timeout: 2592000
+
   # 数据库配置
-  # todo 需替换配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://gz-tdsql-darrkhl7.sql.tencentcdb.com:21056/woodapi
     username: wood
     password: 20010309Npy!
   # Redis 配置
-  # todo 需替换配置，然后取消注释
   redis:
     host: r-2vc8otahhn18exw8zhpd.redis.cn-chengdu.rds.aliyuncs.com
     port: 6379
     password: 20010309npy!
     database: 1
     timeout: 5000
-  # Elasticsearch 配置
-  # todo 需替换配置，然后取消注释
-#  elasticsearch:
-#    uris: http://localhost:9200
-#    username: root
-#    password: 123456
-  # 文件上传
-  servlet:
-    multipart:
-      # 大小限制
-      max-file-size: 10MB
+
 server:
   address: 0.0.0.0
-#  port: 8080
   port: 8080
   servlet:
     context-path: /api
@@ -79,25 +66,23 @@ dubbo:
     address: nacos://localhost:8848
     username: nacos
     password: nacos
-    parameters:
-      namespace: 72274348-f2dd-4049-8f92-3609f5122748   #nacos命名空间
-    group: dubbo-woodapi   #nacos分组
-    file: C:\Users\24420\.dubbo\gateway
-  file: C:\Users\24420\.dubbo\gateway
+#    parameters:
+#      namespace: 72274348-f2dd-4049-8f92-3609f5122748   #nacos命名空间
+#    group: dubbo-woodapi   #nacos分组
   config-center:
     timeout: 40000 #设置服务超时时间
-    file: C:\Users\24420\.dubbo\gateway
+
 # 接口文档配置
-#knife4j:
-#  enable: true
-#  openapi:
-#    title: "接口文档"
-#    version: 1.0
-#    group:
-#      default:
-#        api-rule: package
-#        api-rule-resources:
-#          - com.wood.woodapi.controller
+knife4j:
+  enable: true
+  openapi:
+    title: "接口文档"
+    version: 1.0
+    group:
+      default:
+        api-rule: package
+        api-rule-resources:
+          - com.wood.woodapi.controller
 woodapi:
   client:
     access-key: wood

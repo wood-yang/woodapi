@@ -10,16 +10,11 @@ import com.wood.woodapi.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.wood.common.model.entity.InterfaceInfo;
 import com.wood.woodapi.service.InterfaceInfoService;
 import com.wood.woodapi.mapper.InterfaceInfoMapper;
-import com.wood.woodapi.service.UserService;
 import com.wood.woodapi.utils.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
 * @author 24420
@@ -30,12 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, InterfaceInfo>
     implements InterfaceInfoService{
-
-//    @Resource
-//    private UserService userService;
-//
-//    @Resource
-//    private ElasticsearchRestTemplate elasticsearchRestTemplate;
 
     @Override
     public void validInterfaceInfo(InterfaceInfo interfaceInfo, boolean add) {
