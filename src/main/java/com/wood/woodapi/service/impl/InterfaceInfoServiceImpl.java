@@ -1,17 +1,13 @@
 package com.wood.woodapi.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wood.woodapi.common.ErrorCode;
 import com.wood.woodapi.constant.CommonConstant;
 import com.wood.woodapi.exception.BusinessException;
 import com.wood.woodapi.exception.ThrowUtils;
-import com.wood.woodapi.model.dto.interfaceinfo.InterfaceInfoEsDTO;
 import com.wood.woodapi.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
-import com.wood.woodapi.model.entity.*;
-import com.wood.woodapi.model.vo.InterfaceInfoVO;
+import com.wood.common.model.entity.InterfaceInfo;
 import com.wood.woodapi.service.InterfaceInfoService;
 import com.wood.woodapi.mapper.InterfaceInfoMapper;
 import com.wood.woodapi.service.UserService;
@@ -19,24 +15,11 @@ import com.wood.woodapi.utils.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
-import org.springframework.data.elasticsearch.core.SearchHit;
-import org.springframework.data.elasticsearch.core.SearchHits;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
 * @author 24420
@@ -48,11 +31,11 @@ import java.util.stream.Collectors;
 public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, InterfaceInfo>
     implements InterfaceInfoService{
 
-    @Resource
-    private UserService userService;
-
-    @Resource
-    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+//    @Resource
+//    private UserService userService;
+//
+//    @Resource
+//    private ElasticsearchRestTemplate elasticsearchRestTemplate;
 
     @Override
     public void validInterfaceInfo(InterfaceInfo interfaceInfo, boolean add) {
@@ -99,106 +82,6 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
         }
     }
 
-    @Override
-    public InterfaceInfoVO getInterfaceInfoVO(InterfaceInfo interfaceInfo, HttpServletRequest request) {
-        InterfaceInfoVO interfaceInfoVO = InterfaceInfoVO.objToVo(interfaceInfo);
-        
-        return interfaceInfoVO;
-    }
-
-    @Override
-    public Page<InterfaceInfoVO> getInterfaceInfoVOPage(Page<InterfaceInfo> interfaceInfoPage, HttpServletRequest request) {
-        Page<InterfaceInfoVO> interfaceInfoVOPage = new Page<>(interfaceInfoPage.getCurrent(), interfaceInfoPage.getSize(), interfaceInfoPage.getTotal());
-        BeanUtils.copyProperties(interfaceInfoPage, interfaceInfoVOPage);
-
-        return interfaceInfoVOPage;
-    }
-
-    @Override
-    public Page<InterfaceInfo> searchFromEs(InterfaceInfoQueryRequest interfaceInfoQueryRequest) {
-
-        String name = interfaceInfoQueryRequest.getName();
-        String searchText = interfaceInfoQueryRequest.getSearchText();
-        String url = interfaceInfoQueryRequest.getUrl();
-        String method = interfaceInfoQueryRequest.getMethod();
-
-        Long id = interfaceInfoQueryRequest.getId();
-        Long userId = interfaceInfoQueryRequest.getUserId();
-        String description = interfaceInfoQueryRequest.getDescription();
-        String requestHeader = interfaceInfoQueryRequest.getRequestHeader();
-        String responseHeader = interfaceInfoQueryRequest.getResponseHeader();
-        // es 起始页为 0
-        long current = interfaceInfoQueryRequest.getCurrent() - 1;
-        long pageSize = interfaceInfoQueryRequest.getPageSize();
-        String sortField = interfaceInfoQueryRequest.getSortField();
-        String sortOrder = interfaceInfoQueryRequest.getSortOrder();
-        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        // 过滤
-        boolQueryBuilder.filter(QueryBuilders.termQuery("isDelete", 0));
-        if (id != null) {
-            boolQueryBuilder.filter(QueryBuilders.termQuery("id", id));
-        }
-        if (userId != null) {
-            boolQueryBuilder.filter(QueryBuilders.termQuery("userId", userId));
-        }
-        // 按关键词检索
-        if (StringUtils.isNotBlank(searchText)) {
-            boolQueryBuilder.should(QueryBuilders.matchQuery("name", searchText));
-            boolQueryBuilder.should(QueryBuilders.matchQuery("description", searchText));
-            boolQueryBuilder.minimumShouldMatch(1);
-        }
-        // 按名字检索
-        if (StringUtils.isNotBlank(name)) {
-            boolQueryBuilder.should(QueryBuilders.matchQuery("name", name));
-            boolQueryBuilder.minimumShouldMatch(1);
-        }
-        // 按描述检索
-        if (StringUtils.isNotBlank(description)) {
-            boolQueryBuilder.should(QueryBuilders.matchQuery("description", description));
-            boolQueryBuilder.minimumShouldMatch(1);
-        }
-        // 按url检索
-        if (StringUtils.isNotBlank(description)) {
-            boolQueryBuilder.should(QueryBuilders.matchQuery("url", url));
-            boolQueryBuilder.minimumShouldMatch(1);
-        }
-        // 排序
-        SortBuilder<?> sortBuilder = SortBuilders.scoreSort();
-        if (StringUtils.isNotBlank(sortField)) {
-            sortBuilder = SortBuilders.fieldSort(sortField);
-            sortBuilder.order(CommonConstant.SORT_ORDER_ASC.equals(sortOrder) ? SortOrder.ASC : SortOrder.DESC);
-        }
-        // 分页
-        PageRequest pageRequest = PageRequest.of((int) current, (int) pageSize);
-        // 构造查询
-        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(boolQueryBuilder)
-                .withPageable(pageRequest).withSorts(sortBuilder).build();
-        SearchHits<InterfaceInfoEsDTO> searchHits = elasticsearchRestTemplate.search(searchQuery, InterfaceInfoEsDTO.class);
-        Page<InterfaceInfo> page = new Page<>();
-        page.setTotal(searchHits.getTotalHits());
-        List<InterfaceInfo> resourceList = new ArrayList<>();
-        // 查出结果后，从 db 获取最新动态数据（比如点赞数）
-        if (searchHits.hasSearchHits()) {
-            List<SearchHit<InterfaceInfoEsDTO>> searchHitList = searchHits.getSearchHits();
-            List<Long> interfaceInfoIdList = searchHitList.stream().map(searchHit -> searchHit.getContent().getId())
-                    .collect(Collectors.toList());
-            List<InterfaceInfo> interfaceInfoList = baseMapper.selectBatchIds(interfaceInfoIdList);
-            if (interfaceInfoList != null) {
-                Map<Long, List<InterfaceInfo>> idInterfaceInfoMap = interfaceInfoList.stream().collect(Collectors.groupingBy(InterfaceInfo::getId));
-                interfaceInfoIdList.forEach(interfaceInfoId -> {
-                    if (idInterfaceInfoMap.containsKey(interfaceInfoId)) {
-                        resourceList.add(idInterfaceInfoMap.get(interfaceInfoId).get(0));
-                    } else {
-                        // 从 es 清空 db 已物理删除的数据
-                        String delete = elasticsearchRestTemplate.delete(String.valueOf(interfaceInfoId), InterfaceInfoEsDTO.class);
-                        log.info("delete interfaceInfo {}", delete);
-                    }
-                });
-            }
-        }
-        page.setRecords(resourceList);
-        return page;
-    }
 
     @Override
     public QueryWrapper<InterfaceInfo> getQueryWrapper(InterfaceInfoQueryRequest interfaceInfoQueryRequest) {

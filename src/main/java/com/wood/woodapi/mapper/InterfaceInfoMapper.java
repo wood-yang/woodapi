@@ -1,7 +1,7 @@
 package com.wood.woodapi.mapper;
 
-import com.wood.woodapi.model.entity.InterfaceInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.wood.common.model.entity.InterfaceInfo;
 
 /**
 * @author 24420

@@ -3,7 +3,7 @@ package com.wood.woodapi.job.once;
 import com.wood.woodapi.esdao.PostEsDao;
 import com.wood.woodapi.model.dto.post.PostEsDTO;
 import com.wood.woodapi.model.entity.Post;
-import com.wood.woodapi.service.PostService;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;

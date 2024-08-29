@@ -73,34 +73,4 @@ public class InterfaceInfoVO implements Serializable {
      * 修改时间
      */
     private Date updateTime;
-
-    /**
-     * 包装类转对象
-     *
-     * @param interfaceInfoVO
-     * @return
-     */
-    public static InterfaceInfoVO voToObj(InterfaceInfoVO interfaceInfoVO) {
-        if (interfaceInfoVO == null) {
-            return null;
-        }
-        InterfaceInfoVO interfaceInfo = new InterfaceInfoVO();
-        BeanUtils.copyProperties(interfaceInfoVO, interfaceInfo);
-        return interfaceInfo;
-    }
-
-    /**
-     * 对象转包装类
-     *
-     * @param interfaceInfo
-     * @return
-     */
-    public static InterfaceInfoVO objToVo(InterfaceInfo interfaceInfo) {
-        if (interfaceInfo == null) {
-            return null;
-        }
-        InterfaceInfoVO interfaceInfoVO = new InterfaceInfoVO();
-        BeanUtils.copyProperties(interfaceInfo, interfaceInfoVO);
-        return interfaceInfoVO;
-    }
 }

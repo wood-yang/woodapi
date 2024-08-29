@@ -12,8 +12,8 @@ import com.wood.woodapi.constant.CommonConstant;
 import com.wood.woodapi.exception.BusinessException;
 import com.wood.woodapi.mapper.UserMapper;
 import com.wood.woodapi.model.dto.user.UserQueryRequest;
-import com.wood.woodapi.model.entity.User;
-import com.wood.woodapi.model.enums.UserRoleEnum;
+import com.wood.common.model.entity.User;
+import com.wood.common.model.enums.UserRoleEnum;
 import com.wood.woodapi.model.vo.LoginUserVO;
 import com.wood.woodapi.model.vo.UserVO;
 import com.wood.woodapi.service.UserService;
@@ -191,6 +191,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return true;
     }
 
+    /**
+     * 获取当前登录用户 VO
+     * @param user
+     * @return
+     */
     @Override
     public LoginUserVO getLoginUserVO(User user) {
         if (user == null) {
@@ -201,6 +206,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return loginUserVO;
     }
 
+    /**
+     * 获取用户 VO
+     * @param user
+     * @return
+     */
     @Override
     public UserVO getUserVO(User user) {
         if (user == null) {
@@ -211,6 +221,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return userVO;
     }
 
+    /**
+     * 获取用户 VO List
+     * @param userList
+     * @return
+     */
     @Override
     public List<UserVO> getUserVO(List<User> userList) {
         if (CollUtil.isEmpty(userList)) {

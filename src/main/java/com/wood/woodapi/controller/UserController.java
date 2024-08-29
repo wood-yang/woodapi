@@ -13,9 +13,8 @@ import com.wood.woodapi.model.dto.user.UserAddRequest;
 import com.wood.woodapi.model.dto.user.UserLoginRequest;
 import com.wood.woodapi.model.dto.user.UserQueryRequest;
 import com.wood.woodapi.model.dto.user.UserRegisterRequest;
-import com.wood.woodapi.model.dto.user.UserUpdateMyRequest;
 import com.wood.woodapi.model.dto.user.UserUpdateRequest;
-import com.wood.woodapi.model.entity.User;
+import com.wood.common.model.entity.*;
 import com.wood.woodapi.model.vo.LoginUserVO;
 import com.wood.woodapi.model.vo.UserVO;
 import com.wood.woodapi.service.UserService;
@@ -259,29 +258,5 @@ public class UserController {
         List<UserVO> userVO = userService.getUserVO(userPage.getRecords());
         userVOPage.setRecords(userVO);
         return ResultUtils.success(userVOPage);
-    }
-
-    // endregion
-
-    /**
-     * 更新个人信息
-     *
-     * @param userUpdateMyRequest
-     * @param request
-     * @return
-     */
-    @PostMapping("/update/my")
-    public BaseResponse<Boolean> updateMyUser(@RequestBody UserUpdateMyRequest userUpdateMyRequest,
-            HttpServletRequest request) {
-        if (userUpdateMyRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        User loginUser = userService.getLoginUser(request);
-        User user = new User();
-        BeanUtils.copyProperties(userUpdateMyRequest, user);
-        user.setId(loginUser.getId());
-        boolean result = userService.updateById(user);
-        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-        return ResultUtils.success(true);
     }
 }
