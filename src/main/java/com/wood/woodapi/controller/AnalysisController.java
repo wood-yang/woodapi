@@ -10,6 +10,7 @@ import com.wood.woodapi.exception.BusinessException;
 import com.wood.woodapi.model.vo.InterfaceInfoVO;
 import com.wood.woodapi.service.InterfaceInfoService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/analysis")
 @Slf4j
+@CrossOrigin(origins = {"http://localhost:8000", "http://localhost:3000", "http://113.45.152.60"}, allowCredentials = "true")
 public class AnalysisController {
 
     @Resource

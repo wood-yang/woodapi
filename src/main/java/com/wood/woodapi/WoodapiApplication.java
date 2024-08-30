@@ -16,12 +16,12 @@ import java.io.File;
  * 主类（项目启动入口）
  *
  */
-// todo 如需开启 Redis，须移除 exclude 中的内容
-@SpringBootApplication(exclude = {RedisAutoConfiguration.class})
+
 @MapperScan("com.wood.woodapi.mapper")
-@EnableScheduling
-@EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
-@EnableDubbo
+//@EnableScheduling
+//@EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
+//@EnableDubbo
+@SpringBootApplication()
 public class WoodapiApplication {
 
     public static void main(String[] args) {

@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/userInterfaceInfo")
 @Slf4j
+@CrossOrigin(origins = {"http://localhost:3000", "http://113.45.152.60"}, allowCredentials = "true")
 public class UserInterfaceInfoController {
 
     @Resource

@@ -5,38 +5,37 @@ spring:
   # 默认 dev 环境
   profiles:
     active: dev
-  # 支持 swagger3
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
-  # session 配置
-  session:
-#    store-type: redis
-    # 30 天过期
-    timeout: 2592000
-
-  # 数据库配置
+    # 数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://gz-tdsql-darrkhl7.sql.tencentcdb.com:21056/woodapi
     username: wood
     password: 20010309Npy!
-  # Redis 配置
   redis:
-    host: r-2vc8otahhn18exw8zhpd.redis.cn-chengdu.rds.aliyuncs.com
+    host: localhost
+#    host: r-2vc8otahhn18exw8zhpd.redis.cn-chengdu.rds.aliyuncs.com
     port: 6379
-    password: 20010309npy!
+#    password: 20010309npy!
     database: 1
-    timeout: 5000
+  # 支持 swagger3
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  # session 配置
+  session:
+#    store-type: none
+    store-type: redis
+    timeout: 2592000
 
 server:
   address: 0.0.0.0
   port: 8080
   servlet:
     context-path: /api
-    # cookie 30 天过期
     session:
       cookie:
+        path: /
         max-age: 2592000
 mybatis-plus:
   configuration:
@@ -80,7 +79,3 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - com.wood.woodapi.controller
-woodapi:
-  client:
-    access-key: wood
-    secret-key: abc
