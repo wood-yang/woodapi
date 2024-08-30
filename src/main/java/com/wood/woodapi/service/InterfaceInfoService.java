@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.wood.woodapi.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.wood.common.model.entity.InterfaceInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.wood.woodapi.model.vo.InterfaceInfoVO;
+
+import java.util.List;
 
 /**
 * @author 24420
@@ -14,4 +17,6 @@ public interface InterfaceInfoService extends IService<InterfaceInfo> {
     void validInterfaceInfo(InterfaceInfo interfaceInfo, boolean add);
 
     Wrapper<InterfaceInfo> getQueryWrapper(InterfaceInfoQueryRequest interfaceInfoQueryRequest);
+
+    List<InterfaceInfoVO> getTopInterfaceInvoke();
 }

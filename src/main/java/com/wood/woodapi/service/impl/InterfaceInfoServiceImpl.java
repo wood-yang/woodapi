@@ -2,29 +2,40 @@ package com.wood.woodapi.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wood.common.model.entity.UserInterfaceInfo;
 import com.wood.woodapi.common.ErrorCode;
 import com.wood.woodapi.constant.CommonConstant;
 import com.wood.woodapi.exception.BusinessException;
 import com.wood.woodapi.exception.ThrowUtils;
+import com.wood.woodapi.mapper.UserInterfaceInfoMapper;
 import com.wood.woodapi.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.wood.common.model.entity.InterfaceInfo;
+import com.wood.woodapi.model.vo.InterfaceInfoVO;
 import com.wood.woodapi.service.InterfaceInfoService;
 import com.wood.woodapi.mapper.InterfaceInfoMapper;
 import com.wood.woodapi.utils.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
-* @author 24420
-* @description 针对表【interface_info(接口信息)】的数据库操作Service实现
-* @createDate 2024-08-24 16:35:41
-*/
+ * @author 24420
+ * @description 针对表【interface_info(接口信息)】的数据库操作Service实现
+ * @createDate 2024-08-24 16:35:41
+ */
 @Service
 @Slf4j
 public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, InterfaceInfo>
-    implements InterfaceInfoService{
+        implements InterfaceInfoService {
+
+    @Resource
+    UserInterfaceInfoMapper userInterfaceInfoMapper;
 
     @Override
     public void validInterfaceInfo(InterfaceInfo interfaceInfo, boolean add) {
@@ -81,7 +92,7 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
         String searchText = interfaceInfoQueryRequest.getSearchText();
         String sortField = interfaceInfoQueryRequest.getSortField();
         String sortOrder = interfaceInfoQueryRequest.getSortOrder();
-        
+
         String name = interfaceInfoQueryRequest.getName();
         String url = interfaceInfoQueryRequest.getUrl();
         String method = interfaceInfoQueryRequest.getMethod();
@@ -90,7 +101,7 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
         String description = interfaceInfoQueryRequest.getDescription();
         String requestHeader = interfaceInfoQueryRequest.getRequestHeader();
         String responseHeader = interfaceInfoQueryRequest.getResponseHeader();
-        
+
         // 拼接查询条件
         if (StringUtils.isNotBlank(searchText)) {
             queryWrapper.and(qw -> qw.like("name", searchText).or().like("description", searchText));
@@ -106,6 +117,34 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;
+    }
+
+    @Override
+    public List<InterfaceInfoVO> getTopInterfaceInvoke() {
+        List<InterfaceInfoVO> interfaceInfoVOList = userInterfaceInfoMapper.getTopInterfaceInvoke();
+        InterfaceInfoVO other = new InterfaceInfoVO();
+        if (interfaceInfoVOList.size() >= 4) {
+            other.setName("其他接口");
+            other.setTotalInvokeNum(0);
+            for (int i = 4; i <= interfaceInfoVOList.size(); i++) {
+                InterfaceInfoVO interfaceInfoVO = interfaceInfoVOList.get(i - 1);
+                other.setTotalInvokeNum(other.getTotalInvokeNum() + interfaceInfoVO.getTotalInvokeNum());
+            }
+        }
+        for (int i = 1; i <= 3 && i <= interfaceInfoVOList.size(); i++) {
+            InterfaceInfoVO interfaceInfoVO = interfaceInfoVOList.get(i - 1);
+            Long id = interfaceInfoVO.getId();
+            InterfaceInfo interfaceInfo = this.getById(id);
+            BeanUtils.copyProperties(interfaceInfo, interfaceInfoVO);
+            interfaceInfoVOList.set(i - 1, interfaceInfoVO);
+        }
+        while (interfaceInfoVOList.size() > 3) {
+            interfaceInfoVOList.remove(3);
+        }
+        if (other.getTotalInvokeNum() > 0) {
+            interfaceInfoVOList.add(other);
+        }
+        return interfaceInfoVOList;
     }
 
 }

@@ -2,6 +2,9 @@ package com.wood.woodapi.mapper;
 
 import com.wood.common.model.entity.UserInterfaceInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.wood.woodapi.model.vo.InterfaceInfoVO;
+
+import java.util.List;
 
 /**
 * @author 24420
@@ -11,6 +14,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface UserInterfaceInfoMapper extends BaseMapper<UserInterfaceInfo> {
 
+
+    List<InterfaceInfoVO> getTopInterfaceInvoke();
 }
 
 

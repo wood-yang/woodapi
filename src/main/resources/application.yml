@@ -66,9 +66,6 @@ dubbo:
     address: nacos://localhost:8848
     username: nacos
     password: nacos
-#  parameters:
-#    namespace: a35a3762-46af-4519-bf50-cffbddb21a8d  #nacos命名空间
-#    group: dubbo-woodapi   #nacos分组
   config-center:
     timeout: 40000 #设置服务超时时间
 

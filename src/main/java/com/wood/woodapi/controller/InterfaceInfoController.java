@@ -194,13 +194,15 @@ public class InterfaceInfoController {
         }
         long id = interfaceInfoInvokeRequest.getId();
         // 判断是否存在
-        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
-        ThrowUtils.throwIf(oldInterfaceInfo == null, ErrorCode.NOT_FOUND_ERROR);
+        InterfaceInfo interfaceInfo = interfaceInfoService.getById(id);
+        ThrowUtils.throwIf(interfaceInfo == null, ErrorCode.NOT_FOUND_ERROR);
         // 判断接口是否开启
-        if (!InterfaceInfoStatusEnum.ONLINE.getValue().equals(oldInterfaceInfo.getStatus())) {
+        if (!InterfaceInfoStatusEnum.ONLINE.getValue().equals(interfaceInfo.getStatus())) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口不可用");
         }
         // 调用模拟接口
+        // todo 通过接口的路径参数等，调用决定调用哪一个 SDK
+        // todo 并且需要处理好传入的参数
         String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
         User loginUser = userService.getLoginUser(request);
         String accessKey = loginUser.getAccessKey();

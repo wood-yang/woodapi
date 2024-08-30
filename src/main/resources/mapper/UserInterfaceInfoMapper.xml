@@ -21,4 +21,7 @@
         totalNum,leftNum,status,
         createTime,updateTime,isDeleted
     </sql>
+    <select id="getTopInterfaceInvoke" resultType="com.wood.woodapi.model.vo.InterfaceInfoVO">
+        select interfaceInfoId as id, sum(totalNum) as totalInvokeNum from user_interface_info group by interfaceInfoId order by totalInvokeNum desc;
+    </select>
 </mapper>

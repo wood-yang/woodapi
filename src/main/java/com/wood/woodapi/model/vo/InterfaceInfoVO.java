@@ -1,70 +1,20 @@
 package com.wood.woodapi.model.vo;
 
+import com.wood.common.model.entity.InterfaceInfo;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
- * 帖子视图
- *
+ * 接口信息封装类
  *
  */
 @Data
-public class InterfaceInfoVO implements Serializable {
+public class InterfaceInfoVO extends InterfaceInfo implements Serializable {
 
     /**
-     * 自增ID
+     * 总调用次数
      */
-    private Integer id;
+    private Integer totalInvokeNum;
 
-    /**
-     * 接口名称
-     */
-    private String name;
-
-    /**
-     * 接口描述
-     */
-    private String description;
-
-    /**
-     * 接口地址
-     */
-    private String url;
-
-    /**
-     * 接口类型
-     */
-    private String method;
-
-    /**
-     * 状态(0 - 关闭 1 - 打开)
-     */
-    private Integer status;
-
-    /**
-     * 请求头
-     */
-    private String requestHeader;
-
-    /**
-     * 响应头
-     */
-    private String responseHeader;
-
-    /**
-     * 创建人 id
-     */
-    private Long userId;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 修改时间
-     */
-    private Date updateTime;
 }
