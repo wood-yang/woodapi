@@ -1,20 +1,19 @@
 package com.wood.woodapi.controller;
 
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
+import com.wood.common.model.entity.*;
+import com.wood.common.model.entity.User;
+import com.wood.common.model.enums.*;
 import com.wood.woodapi.annotation.AuthCheck;
 import com.wood.woodapi.common.*;
 import com.wood.woodapi.constant.UserConstant;
 import com.wood.woodapi.exception.BusinessException;
 import com.wood.woodapi.exception.ThrowUtils;
-import com.wood.woodapi.model.dto.interfaceinfo.InterfaceInfoAddRequest;
-import com.wood.woodapi.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
-import com.wood.woodapi.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
-import com.wood.woodapi.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
-import com.wood.common.model.entity.User;
-import com.wood.common.model.entity.*;
-import com.wood.common.model.enums.*;
+import com.wood.woodapi.model.dto.interfaceInfo.InterfaceInfoAddRequest;
+import com.wood.woodapi.model.dto.interfaceInfo.InterfaceInfoInvokeRequest;
+import com.wood.woodapi.model.dto.interfaceInfo.InterfaceInfoQueryRequest;
+import com.wood.woodapi.model.dto.interfaceInfo.InterfaceInfoUpdateRequest;
 import com.wood.woodapi.service.InterfaceInfoService;
 import com.wood.woodapi.service.UserService;
 import com.wood.woodapiclientsdk.client.WoodapiClient;
@@ -26,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
+import java.lang.reflect.Method;
 
 /**
  * 接口管理
@@ -35,7 +34,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/interfaceInfo")
 @Slf4j
-@CrossOrigin(origins = {"http://localhost:3000", "http://113.45.152.60"}, allowCredentials = "true")
 public class InterfaceInfoController {
 
     @Resource
@@ -146,8 +144,8 @@ public class InterfaceInfoController {
         // 判断是否能正常调用
         com.wood.woodapiclientsdk.model.User user = new com.wood.woodapiclientsdk.model.User();
         user.setUsername("mafeifei");
-        String username = woodapiClient.getUsernameByPost(user);
-        if (StringUtils.isBlank(username)) {
+        String dailyEnglish = woodapiClient.getDailyEnglish();
+        if (StringUtils.isBlank(dailyEnglish)) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口无法正常调用");
         }
         // 修改接口状态
@@ -202,17 +200,25 @@ public class InterfaceInfoController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口不可用");
         }
         // 调用模拟接口
-        // todo 通过接口的路径参数等，调用决定调用哪一个 SDK
-        // todo 并且需要处理好传入的参数
+        // todo 如果第一次调用某个接口，需要为用户接口表创建对应信息
         String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
         User loginUser = userService.getLoginUser(request);
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
+
         WoodapiClient tempClient = new WoodapiClient(accessKey, secretKey);
         Gson gson = new Gson();
-        com.wood.woodapiclientsdk.model.User user = gson.fromJson(userRequestParams, com.wood.woodapiclientsdk.model.User.class);
-        String username = tempClient.getUsernameByPost(user);
-        return ResultUtils.success(username);
+        String str = gson.fromJson(userRequestParams, String.class);
+        try {
+            Method method = tempClient.getClass().getMethod(interfaceInfo.getName());
+            String result = (String) method.invoke(tempClient);
+            if (result == null) {
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            }
+            return ResultUtils.success(result);
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+        }
     }
 
     /**
@@ -239,85 +245,12 @@ public class InterfaceInfoController {
      * @param interfaceInfoQueryRequest
      * @return
      */
-    @PostMapping("/list/page")
-//    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Page<InterfaceInfo>> listInterfaceInfoByPage(@RequestBody InterfaceInfoQueryRequest interfaceInfoQueryRequest) {
+    @GetMapping("/list/page")
+    public BaseResponse<Page<InterfaceInfo>> listInterfaceInfoByPage(InterfaceInfoQueryRequest interfaceInfoQueryRequest) {
         long current = interfaceInfoQueryRequest.getCurrent();
         long size = interfaceInfoQueryRequest.getPageSize();
         Page<InterfaceInfo> interfaceInfoPage = interfaceInfoService.page(new Page<>(current, size),
                 interfaceInfoService.getQueryWrapper(interfaceInfoQueryRequest));
         return ResultUtils.success(interfaceInfoPage);
     }
-
-//    /**
-//     * 分页获取列表（封装类）
-//     *
-//     * @param interfaceInfoQueryRequest
-//     * @param request
-//     * @return
-//     */
-//    @PostMapping("/list/page/vo")
-//    public BaseResponse<Page<InterfaceInfoVO>> listInterfaceInfoVOByPage(@RequestBody InterfaceInfoQueryRequest interfaceInfoQueryRequest,
-//                                                                         HttpServletRequest request) {
-//        long current = interfaceInfoQueryRequest.getCurrent();
-//        long size = interfaceInfoQueryRequest.getPageSize();
-//        // 限制爬虫
-//        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-//        Page<InterfaceInfo> interfaceInfoPage = interfaceInfoService.page(new Page<>(current, size),
-//                interfaceInfoService.getQueryWrapper(interfaceInfoQueryRequest));
-//        return ResultUtils.success(interfaceInfoService.getInterfaceInfoVOPage(interfaceInfoPage, request));
-//    }
-
-
-
-//    /**
-//     * 分页搜索（从 ES 查询，封装类）
-//     *
-//     * @param interfaceInfoQueryRequest
-//     * @param request
-//     * @return
-//     */
-//    @PostMapping("/search/page/vo")
-//    public BaseResponse<Page<InterfaceInfoVO>> searchInterfaceInfoVOByPage(@RequestBody InterfaceInfoQueryRequest interfaceInfoQueryRequest,
-//            HttpServletRequest request) {
-//        long size = interfaceInfoQueryRequest.getPageSize();
-//        // 限制爬虫
-//        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-//        Page<InterfaceInfo> interfaceInfoPage = interfaceInfoService.searchFromEs(interfaceInfoQueryRequest);
-//        return ResultUtils.success(interfaceInfoService.getInterfaceInfoVOPage(interfaceInfoPage, request));
-//    }
-
-//    /**
-//     * 编辑（用户）
-//     *
-//     * @param interfaceInfoEditRequest
-//     * @param request
-//     * @return
-//     */
-//    @PostMapping("/edit")
-//    public BaseResponse<Boolean> editInterfaceInfo(@RequestBody InterfaceInfoEditRequest interfaceInfoEditRequest, HttpServletRequest request) {
-//        if (interfaceInfoEditRequest == null || interfaceInfoEditRequest.getId() <= 0) {
-//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-//        }
-//        InterfaceInfo interfaceInfo = new InterfaceInfo();
-//        BeanUtils.copyProperties(interfaceInfoEditRequest, interfaceInfo);
-//        List<String> tags = interfaceInfoEditRequest.getTags();
-//        if (tags != null) {
-//            interfaceInfo.setTags(JSONUtil.toJsonStr(tags));
-//        }
-//        // 参数校验
-//        interfaceInfoService.validInterfaceInfo(interfaceInfo, false);
-//        User loginUser = userService.getLoginUser(request);
-//        long id = interfaceInfoEditRequest.getId();
-//        // 判断是否存在
-//        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
-//        ThrowUtils.throwIf(oldInterfaceInfo == null, ErrorCode.NOT_FOUND_ERROR);
-//        // 仅本人或管理员可编辑
-//        if (!oldInterfaceInfo.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
-//            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
-//        }
-//        boolean result = interfaceInfoService.updateById(interfaceInfo);
-//        return ResultUtils.success(result);
-//    }
-
 }

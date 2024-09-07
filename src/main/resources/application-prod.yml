@@ -1,19 +1,37 @@
 # 线上配置文件
 server:
+  address: 0.0.0.0
   port: 8101
+  servlet:
+    context-path: /api
+    session:
+      cookie:
+#        domain: 117.72.10.108
+        domain: http://woodapi.wood-yang.cn/
+        max-age: 259200
 spring:
   # 数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://gz-tdsql-darrkhl7.sql.tencentcdb.com:21056/yupao
+#    url: jdbc:mysql://117.72.10.108:23148/woodapi
+    url: jdbc:mysql://localhost:23148/woodapi
     username: wood
-    password: 20010309Npy!
-  # Redis 配置
-  redis:
-    host: r-2vc8otahhn18exw8zhpd.redis.cn-chengdu.rds.aliyuncs.com
-    password: 20010309npy!
-    port: 6379
-    database: 3
+    password: bB5JBj6P6iYJih65
+dubbo:
+  application:
+    #设置应用的名称
+    name: dubbo-springboot-provider
+    qos-enable: true
+    qos-port: 23444
+  #指定使用Dubbo协议，且端口设置为-1，表示随机分配可用端口
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    #配置注册中心为Nacos
+    id: nacos-registry
+#    address: nacos://172.30.0.3:8848
+    address: nacos://localhost:8848
 
 mybatis-plus:
   configuration:

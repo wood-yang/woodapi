@@ -2,17 +2,16 @@ package com.wood.woodapi.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wood.common.model.entity.UserInterfaceInfo;
+import com.wood.common.model.entity.InterfaceInfo;
 import com.wood.woodapi.common.ErrorCode;
 import com.wood.woodapi.constant.CommonConstant;
 import com.wood.woodapi.exception.BusinessException;
 import com.wood.woodapi.exception.ThrowUtils;
+import com.wood.woodapi.mapper.InterfaceInfoMapper;
 import com.wood.woodapi.mapper.UserInterfaceInfoMapper;
-import com.wood.woodapi.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
-import com.wood.common.model.entity.InterfaceInfo;
+import com.wood.woodapi.model.dto.interfaceInfo.InterfaceInfoQueryRequest;
 import com.wood.woodapi.model.vo.InterfaceInfoVO;
 import com.wood.woodapi.service.InterfaceInfoService;
-import com.wood.woodapi.mapper.InterfaceInfoMapper;
 import com.wood.woodapi.utils.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -21,7 +20,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,8 +47,6 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
         Long id = interfaceInfo.getId();
         Long userId = interfaceInfo.getUserId();
         String description = interfaceInfo.getDescription();
-        String requestHeader = interfaceInfo.getRequestHeader();
-        String responseHeader = interfaceInfo.getResponseHeader();
         // 创建时，参数不能为空
         if (add) {
             ThrowUtils.throwIf(StringUtils.isAnyBlank(name, url, method), ErrorCode.PARAMS_ERROR);
@@ -73,12 +69,6 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
         }
         if (StringUtils.isNotBlank(description) && description.length() > 2000) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口描述过长");
-        }
-        if (StringUtils.isNotBlank(requestHeader) && requestHeader.length() > 2000) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求头过长");
-        }
-        if (StringUtils.isNotBlank(responseHeader) && responseHeader.length() > 2000) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "响应头过长");
         }
     }
 

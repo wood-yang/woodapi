@@ -1,7 +1,5 @@
-package com.wood.woodapi.model.dto.interfaceinfo;
+package com.wood.woodapi.model.dto.interfaceInfo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.wood.woodapi.common.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

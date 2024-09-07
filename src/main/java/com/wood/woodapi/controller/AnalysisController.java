@@ -1,6 +1,5 @@
 package com.wood.woodapi.controller;
 
-import com.wood.common.model.entity.InterfaceInfo;
 import com.wood.woodapi.annotation.AuthCheck;
 import com.wood.woodapi.common.BaseResponse;
 import com.wood.woodapi.common.ErrorCode;
@@ -10,13 +9,11 @@ import com.wood.woodapi.exception.BusinessException;
 import com.wood.woodapi.model.vo.InterfaceInfoVO;
 import com.wood.woodapi.service.InterfaceInfoService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -25,24 +22,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/analysis")
 @Slf4j
-@CrossOrigin(origins = {"http://localhost:8000", "http://localhost:3000", "http://113.45.152.60"}, allowCredentials = "true")
 public class AnalysisController {
 
     @Resource
     private InterfaceInfoService interfaceInfoService;
 
-    /**
-     * 查出topN的接口信息
-     * @param request
-     * @return
-     */
-    @GetMapping("/top/interface/invoke")
+    @GetMapping("/interfaceInfo")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<List<InterfaceInfoVO>> getTopInterfaceInvoke(HttpServletRequest request) {
-        List<InterfaceInfoVO> topInterfaceInvoke = interfaceInfoService.getTopInterfaceInvoke();
-        if (topInterfaceInvoke == null) {
+    public BaseResponse<List<InterfaceInfoVO>> analysisInterfaceInfo() {
+        List<InterfaceInfoVO> interfaceInfoVOList = interfaceInfoService.getTopInterfaceInvoke();
+        if (interfaceInfoVOList == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        return ResultUtils.success(topInterfaceInvoke);
+        return ResultUtils.success(interfaceInfoVOList);
     }
 }

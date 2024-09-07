@@ -1,32 +1,33 @@
 package com.wood.woodapi.service.impl;
 
-import static com.wood.woodapi.constant.UserConstant.USER_LOGIN_STATE;
-
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wood.common.model.entity.User;
+import com.wood.common.model.enums.UserRoleEnum;
 import com.wood.woodapi.common.ErrorCode;
 import com.wood.woodapi.constant.CommonConstant;
 import com.wood.woodapi.exception.BusinessException;
 import com.wood.woodapi.mapper.UserMapper;
 import com.wood.woodapi.model.dto.user.UserQueryRequest;
-import com.wood.common.model.entity.User;
-import com.wood.common.model.enums.UserRoleEnum;
 import com.wood.woodapi.model.vo.LoginUserVO;
 import com.wood.woodapi.model.vo.UserVO;
 import com.wood.woodapi.service.UserService;
 import com.wood.woodapi.utils.SqlUtils;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.wood.woodapi.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * 用户服务实现
@@ -51,7 +52,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (userAccount.length() < 4) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
         }
-        if (userPassword.length() < 8 || checkPassword.length() < 8) {
+        if (userPassword.length() < 4 || checkPassword.length() < 4) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
         }
         // 密码和校验密码相同
@@ -62,7 +63,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             // 账户不能重复
             QueryWrapper<User> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("userAccount", userAccount);
-            long count = this.baseMapper.selectCount(queryWrapper);
+            long count = this.count(queryWrapper);
             if (count > 0) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
             }
@@ -94,7 +95,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (userAccount.length() < 4) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号错误");
         }
-        if (userPassword.length() < 8) {
+        if (userPassword.length() < 4) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码错误");
         }
         // 2. 加密
@@ -103,7 +104,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("userAccount", userAccount);
         queryWrapper.eq("userPassword", encryptPassword);
-        User user = this.baseMapper.selectOne(queryWrapper);
+        User user = this.getOne(queryWrapper);
         // 用户不存在
         if (user == null) {
             log.info("user login failed, userAccount cannot match userPassword");

@@ -1,9 +1,10 @@
 package com.wood.woodapi.model.dto.user;
 
 import com.wood.woodapi.common.PageRequest;
-import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
 
 /**
  * 用户查询请求

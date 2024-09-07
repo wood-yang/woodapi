@@ -4,19 +4,22 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wood.common.model.entity.InterfaceInfo;
+import com.wood.common.model.entity.UserInterfaceInfo;
 import com.wood.woodapi.common.ErrorCode;
 import com.wood.woodapi.constant.CommonConstant;
 import com.wood.woodapi.exception.BusinessException;
-import com.wood.woodapi.exception.ThrowUtils;
-import com.wood.woodapi.model.dto.userinterfaceInfo.UserInterfaceInfoQueryRequest;
-import com.wood.common.model.entity.UserInterfaceInfo;
-import com.wood.woodapi.service.UserInterfaceInfoService;
 import com.wood.woodapi.mapper.UserInterfaceInfoMapper;
+import com.wood.woodapi.model.dto.userinterfaceInfo.UserInterfaceInfoQueryRequest;
+import com.wood.woodapi.service.InterfaceInfoService;
+import com.wood.woodapi.service.UserInterfaceInfoService;
 import com.wood.woodapi.utils.SqlUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
 * @author 24420
@@ -26,6 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoMapper, UserInterfaceInfo>
     implements UserInterfaceInfoService{
+
+    @Resource
+    private InterfaceInfoService interfaceInfoService;
 
     @Override
     public void validUserInterfaceInfo(UserInterfaceInfo userInterfaceInfo, boolean add) {
@@ -100,11 +106,31 @@ public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoM
         if (interfaceInfoId == null || interfaceInfoId <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "id 错误");
         }
-        UpdateWrapper<UserInterfaceInfo> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("userId", userId);
-        updateWrapper.eq("interfaceInfoId", interfaceInfoId);
-        updateWrapper.setSql("leftNum = leftNum - 1, totalNum = totalNum + 1");
-        return this.update(updateWrapper);
+        QueryWrapper<UserInterfaceInfo> userInterfaceInfoQueryWrapper = new QueryWrapper<>();
+        userInterfaceInfoQueryWrapper.eq("userId", userId);
+        userInterfaceInfoQueryWrapper.eq("interfaceInfoId", interfaceInfoId);
+        List<UserInterfaceInfo> userInterfaceInfoList = this.list(userInterfaceInfoQueryWrapper);
+        if (userInterfaceInfoList.isEmpty()) {
+            UserInterfaceInfo userInterfaceInfo = new UserInterfaceInfo();
+            userInterfaceInfo.setUserId(userId);
+            userInterfaceInfo.setInterfaceInfoId(interfaceInfoId);
+            userInterfaceInfo.setTotalNum(0);
+            this.save(userInterfaceInfo);
+        }
+
+        UpdateWrapper<UserInterfaceInfo> userInterfaceInfoUpdateWrapper = new UpdateWrapper<>();
+        userInterfaceInfoUpdateWrapper.eq("userId", userId);
+        userInterfaceInfoUpdateWrapper.eq("interfaceInfoId", interfaceInfoId);
+//        userInterfaceInfoUpdateWrapper.setSql("leftNum = leftNum - 1, totalNum = totalNum + 1");
+        userInterfaceInfoUpdateWrapper.setSql("totalNum = totalNum + 1");
+        boolean result1 = this.update(userInterfaceInfoUpdateWrapper);
+
+        UpdateWrapper<InterfaceInfo> interfaceInfoUpdateWrapper = new UpdateWrapper<>();
+        interfaceInfoUpdateWrapper.eq("id", interfaceInfoId);
+        interfaceInfoUpdateWrapper.setSql("totalInvokeNum = totalInvokeNum + 1");
+        boolean result2 = interfaceInfoService.update(interfaceInfoUpdateWrapper);
+
+        return result1 && result2;
     }
 }
 

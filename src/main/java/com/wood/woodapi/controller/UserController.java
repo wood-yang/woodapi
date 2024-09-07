@@ -1,6 +1,7 @@
 package com.wood.woodapi.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wood.common.model.entity.*;
 import com.wood.woodapi.annotation.AuthCheck;
 import com.wood.woodapi.common.BaseResponse;
 import com.wood.woodapi.common.DeleteRequest;
@@ -9,25 +10,19 @@ import com.wood.woodapi.common.ResultUtils;
 import com.wood.woodapi.constant.UserConstant;
 import com.wood.woodapi.exception.BusinessException;
 import com.wood.woodapi.exception.ThrowUtils;
-import com.wood.woodapi.model.dto.user.UserAddRequest;
-import com.wood.woodapi.model.dto.user.UserLoginRequest;
-import com.wood.woodapi.model.dto.user.UserQueryRequest;
-import com.wood.woodapi.model.dto.user.UserRegisterRequest;
-import com.wood.woodapi.model.dto.user.UserUpdateRequest;
-import com.wood.common.model.entity.*;
+import com.wood.woodapi.model.dto.user.*;
 import com.wood.woodapi.model.vo.LoginUserVO;
 import com.wood.woodapi.model.vo.UserVO;
 import com.wood.woodapi.service.UserService;
-
-import java.util.List;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 import static com.wood.woodapi.service.impl.UserServiceImpl.SALT;
 
@@ -39,7 +34,6 @@ import static com.wood.woodapi.service.impl.UserServiceImpl.SALT;
 @RestController
 @RequestMapping("/user")
 @Slf4j
-@CrossOrigin(origins = {"http://localhost:3000", "http://113.45.152.60"}, allowCredentials = "true")
 public class UserController {
 
     @Resource

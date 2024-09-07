@@ -1,16 +1,19 @@
 package com.wood.woodapi.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wood.common.model.entity.User;
+import com.wood.common.model.entity.UserInterfaceInfo;
 import com.wood.woodapi.annotation.AuthCheck;
-import com.wood.woodapi.common.*;
+import com.wood.woodapi.common.BaseResponse;
+import com.wood.woodapi.common.DeleteRequest;
+import com.wood.woodapi.common.ErrorCode;
+import com.wood.woodapi.common.ResultUtils;
 import com.wood.woodapi.constant.UserConstant;
 import com.wood.woodapi.exception.BusinessException;
 import com.wood.woodapi.exception.ThrowUtils;
 import com.wood.woodapi.model.dto.userinterfaceInfo.UserInterfaceInfoAddRequest;
 import com.wood.woodapi.model.dto.userinterfaceInfo.UserInterfaceInfoQueryRequest;
 import com.wood.woodapi.model.dto.userinterfaceInfo.UserInterfaceInfoUpdateRequest;
-import com.wood.common.model.entity.UserInterfaceInfo;
-import com.wood.common.model.entity.User;
 import com.wood.woodapi.service.UserInterfaceInfoService;
 import com.wood.woodapi.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/userInterfaceInfo")
 @Slf4j
-@CrossOrigin(origins = {"http://localhost:3000", "http://113.45.152.60"}, allowCredentials = "true")
 public class UserInterfaceInfoController {
 
     @Resource

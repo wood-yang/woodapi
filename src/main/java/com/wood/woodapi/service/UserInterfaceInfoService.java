@@ -2,8 +2,8 @@ package com.wood.woodapi.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wood.woodapi.model.dto.userinterfaceInfo.UserInterfaceInfoQueryRequest;
 import com.wood.common.model.entity.UserInterfaceInfo;
+import com.wood.woodapi.model.dto.userinterfaceInfo.UserInterfaceInfoQueryRequest;
 
 /**
 * @author 24420

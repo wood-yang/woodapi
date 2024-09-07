@@ -1,4 +1,4 @@
-package com.wood.woodapi.model.dto.interfaceinfo;
+package com.wood.woodapi.model.dto.interfaceInfo;
 
 import lombok.Data;
 
